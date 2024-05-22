@@ -1,0 +1,119 @@
+import { languages } from 'monaco-editor';
+ 
+export const rules = {
+      keywords: [
+        'module', 'struct', 'resource', 'fun', 'public', 'move', 'copy', 'let',
+        'if', 'else', 'return', 'true', 'false', 'script', 'use', 'has', 'acquires'
+    ],
+    typeKeywords: [
+        'address', 'signer', 'bool', 'u8', 'u64', 'u128'
+    ],
+    operators: [
+        '=', '==', '!=', '<', '<=', '>', '>=', '+', '-', '*', '/', '%', '!', '&&', '||'
+    ],
+    symbols: /[=><!~?:&|+\-*\/\^%]+/,
+    brackets: [
+        { open: '{', close: '}', token: 'delimiter.curly' },
+        { open: '[', close: ']', token: 'delimiter.square' },
+        { open: '(', close: ')', token: 'delimiter.parenthesis' },
+        { open: '<', close: '>', token: 'delimiter.angle' }
+    ],
+    tokenizer: {
+        root: [
+            [/common/, 'custom-keyword'],
+            [/[a-z_$][\w$]*/, {
+                cases: {
+                    '@keywords': 'keyword',
+                    '@typeKeywords': 'keyword.type',
+                    '@default': 'identifier'
+                }
+            }],
+            [/[A-Z][\w\$]*/, 'type.identifier'],
+            { include: '@whitespace' },
+            [/[{}()\[\]]/, '@brackets'],
+            [/<[<>]?/, '@brackets'],
+            [/@symbols/, {
+                cases: {
+                    '@operators': 'operator',
+                    '@default': ''
+                }
+            }],
+            [/\d*\.\d+([eE][\-+]?\d+)?/, 'number.float'],
+            [/0[xX][0-9a-fA-F]+/, 'number.hex'],
+            [/\d+/, 'number'],
+            [/[;,.]/, 'delimiter'],
+            [/"([^"\\]|\\.)*$/, 'string.invalid'],
+            [/"/, 'string', '@string'],
+            [/'[^\\']'/, 'string'],
+            [/'/, 'string.invalid']
+        ],
+        comment: [
+            [/[^/*]+/, 'comment'],
+            [/\*\//, 'comment', '@pop'],
+            [/[\/*]/, 'comment']
+        ],
+        string: [
+            [/[^\\"]+/, 'string'],
+            [/"/, 'string', '@pop'],
+            [/\\./, 'string.escape']
+        ],
+        whitespace: [
+            [/[ \t\r\n]+/, ''],
+            [/\/\*\*(?!\/)/, 'comment.doc', '@comment'],
+            [/\/\*/, 'comment', '@comment'],
+            [/\/\/.*$/, 'comment']
+        ],}
+      
+    }
+      
+    export const semanticTokensLegend: languages.SemanticTokensLegend = {
+        tokenTypes: [
+          'comment',
+          'string',
+          'keyword',
+          'number',
+          'regexp',
+          'operator',
+          'namespace',
+          'type',
+          'struct',
+          'class',
+          'interface',
+          'enum',
+          'typeParameter',
+          'function',
+          'member',
+          'macro',
+          'variable',
+          'parameter',
+          'property',
+          'label',
+          'unsupported',
+        ],
+        tokenModifiers: [
+          'documentation',
+          'declaration',
+          'definition',
+          'static',
+          'abstract',
+          'deprecated',
+          'readonly',
+          'default_library',
+          'async',
+          'attribute',
+          'callable',
+          'constant',
+          'consuming',
+          'controlFlow',
+          'crateRoot',
+          'injected',
+          'intraDocLink',
+          'library',
+          'mutable',
+          'public',
+          'reference',
+          'trait',
+          'unsafe',
+        ],
+      };
+      
