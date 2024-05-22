@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 
-import { testTokenization } from '../testRunner';
+// import { testTokenization } from '../testRunner';
 
 export const  testRule = [
 	// String
