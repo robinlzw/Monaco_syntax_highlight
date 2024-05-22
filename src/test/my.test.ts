@@ -4,7 +4,17 @@
 //     testTokenization('move', testRule);
 // }
 
-import { editor } from './monaco-editor-core.ts';
+// import { editor } from './monaco-editor-core.ts';
+// export * from './monaco-editor-core.ts';
+// const { editor } = require('monaco-editor-core');
+
+
+// import { editor } from '/Users/edy/workspace/robinyw/Monaco_syntax_highlight/node_modules/monaco-editor-core/esm/vs/editor/editor.api.d.ts';
+// import type { editor } from 'monaco-editor-core/esm/vs/editor/editor.api';
+import { editor } from 'monaco-editor-core/esm/vs/editor/editor.api';
+// import * from 'monaco-editor-core/esm/vs/editor/editor.api';
+
+
 // 执行测试函数
 const hanldTest = () => {
 	let text = `
