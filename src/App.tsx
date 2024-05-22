@@ -64,6 +64,7 @@ const MonacoEditor = memo(() => {
     monaco.current.languages.register({ id: 'move' });
     monaco.current.languages.setMonarchTokensProvider('move', Rules)
     monaco.current.editor.defineTheme('move-theme', theme);
+    monaco.current.editor.setTheme('move-theme');
   }
   useEffect(()=>{
 

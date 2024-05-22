@@ -4,6 +4,7 @@ const theme = {
     base: 'vs-dark',
     inherit: true,
     rules: [
+      { token: 'annotation', foreground: 'C586C0' },
       { token: 'keyword', foreground: '569CD6' }, // 蓝色
       { token: 'keyword.type', foreground: '4EC9B0' }, // 青色
       { token: 'identifier', foreground: 'D4D4D4' }, // 灰色
@@ -17,6 +18,8 @@ const theme = {
       { token: 'delimiter.square', foreground: '569CD6' }, // 蓝色
       { token: 'delimiter.parenthesis', foreground: '569CD6' }, // 蓝色
       { token: 'delimiter.angle', foreground: '569CD6' }, // 蓝色
+      { token: 'namespace.lending', foreground: 'B5CEA8' },
+      { token: 'namespace.lastModName', foreground: '569CD6', fontStyle: 'italic' }
   ],
   colors: {
       'editor.foreground': '#D4D4D4',
