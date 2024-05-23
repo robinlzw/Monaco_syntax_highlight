@@ -57,6 +57,9 @@ export const language = <languages.IMonarchLanguage>{
 		'==', '=>', '>', '>=', '>>', '>>=', '@', '^', '^=', '|', '|=', '||', '_', '?', '#'
 	],
 
+	// we include these common regular expressions
+	symbols:  /[=><!~?:&|+\-*\/\^%]+/,
+
 	escapes: /\\([nrt0\"''\\]|x\h{2}|u\{\h{1,6}\})/,
 	intSuffixes: /[iu](8|16|32|64|128|size)/,
 	floatSuffixes: /f(32|64)/,
@@ -76,19 +79,20 @@ export const language = <languages.IMonarchLanguage>{
 			{ include: '@whitespace' },
 			// Module declaration
 			[/module /, { token: 'keyword.module', next: '@module' }],
+			[/\}/, { token: 'delimiter.curly.end_file', next: '@pop' }],
 		],
 
 		module: [
 			// Module name with namespace
 			[/([a-zA-Z_$][\w$]*::)+/, { token: 'namespace.lending', next: '@lastModName' }],
-			[/([A-Za-z_$][\w$]*::)+/, { token: 'namespace.lending', next: '@lastModName' }],
 			// Whitespace + comments
 			{ include: '@whitespace' },
+			[/\}/, { token: 'rematch', next: '@pop' }],
 		],
 		lastModName: [
 			[/[a-zA-Z_$][\w$]/, 'namespace.lastModName'],
-			[/[A-Za-z_$][\w$]/, 'namespace.lastModName'],
 			[/\s+{/, { token: 'delimiter.curly', next: '@moduleBody' }],
+			[/\}/, { token: 'rematch', next: '@pop' }],
 		],
 
 		moduleBody: [
@@ -96,19 +100,8 @@ export const language = <languages.IMonarchLanguage>{
 			[/use /, { token: 'keyword.use', next: '@use_statement' }],
 			// 匹配 const 关键字
 			[/const /, { token: 'keyword.const', next: '@const_statement' }],
-			// Match struct declaration with optional visibility and abilities
-			// [
-			// 	/\b(public\s+)?\b(struct)\b\s+([a-zA-Z_$][\w$]*)\s*(\bhas\b\s+([a-zA-Z_$][\w$, ]*)\s*)?\{/,
-			// 	[
-			// 		{ token: 'visibility', next: '@visibility' },          // public (optional)
-			// 		{ token: 'keyword.type' },                             // struct
-			// 		{ token: 'identifier' },                               // struct name
-			// 		{ token: 'keyword.ability', next: '@abilities' },      // has (optional)
-			// 		{ token: 'type.identifier' },                          // abilities list (optional)
-			// 		// { token: 'delimiter.curly', next: '@struct_body' }     // {
-			// 		{ token: 'delimiter.curly' }     // {
-			// 	]
-			// ],
+			// 匹配 struct
+			[/\bstruct\b/, { token: 'keyword.struct', next: '@struct_def' }],
 
 			// Annotations
 			[/#\[.*\]/, 'annotation'],
@@ -121,14 +114,7 @@ export const language = <languages.IMonarchLanguage>{
 					'@default': 'normal_code'
 				}
 			}],
-			// // Designator
-			// [/\$/, 'identifier'],
-			// // Byte literal
-			// [/'(\S|@escapes)'/, 'string.byteliteral'],
-			// // Strings
-			// [/"/, { token: 'string.quote', bracket: '@open', next: '@string' }],
-			// { include: '@numbers' },
-			// [/[{}()\[\]]/, '@brackets'],
+			[/\}/, { token: '@rematch', next: '@pop' }],
 		],
 
 		whitespace: [
@@ -236,19 +222,36 @@ export const language = <languages.IMonarchLanguage>{
 			// [/[^\{]+/, 'normalcode.in.const'],
 		],
 
+		struct_def: [
+			[/[A-Z][\w\$]*/, 'type.identifier.struct_name'],
+			[/[a-zA-Z_$][\w$]*/, {
+				cases: {
+					'@property': 'property',
+					'@default': 'abilities'
+				}
+			}],
+			// Match commas separating identifiers
+			[/,/, { token: 'delimiter.comma' }],
+			[/\s+{/, { token: 'delimiter.curly', next: '@struct_body' }],
+			[/\}/, { token: 'delimiter.curly.end_struct_def', next: '@pop' }],
+
+			// Whitespace + comments
+			{ include: '@whitespace' },
+		],
+
 		struct_body: [
 			// Match end of struct
-			[/\}/, { token: 'delimiter.curly', next: '@pop' }],
+			[/\}/, { token: '@rematch', next: '@pop' }],
 
-			// Match struct fields
-			[
-				/([a-zA-Z_$][\w$]*)\s*:\s*([a-zA-Z_$][\w$<,>\[\]]*)\s*,?/,
-				[
-					{ token: 'identifier' },          // field name
-					{ token: '@fieldType' },          // field type
-				]
-			],
-
+			// 匹配结构体字段
+			[/([a-zA-Z_]\w*)(:)/, [
+				'field_name',
+				'delimiter.colon'
+			]],
+			[/[a-zA-Z_]\w*/, 'field_type'],
+			[/[<>](?!@symbols)/, '@brackets'],
+			[/[:,]/, 'delimiter.comma'],
+			// [/[^\{]+/, 'normalcode.in.struct_body'],
 			// Whitespace + comments
 			{ include: '@whitespace' },
 		],

@@ -25,6 +25,11 @@ export const  testRule = [
 					payment_id: u64,
 					coin: Coin<SUI>,
 				}
+
+				struct IdentifiedPayment {
+					payment_id: u64,
+					coin: Coin<SUI>,
+				}
 			}
 			`,
 			tokens: [
