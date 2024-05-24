@@ -19,7 +19,26 @@ const theme = {
       { token: 'delimiter.parenthesis', foreground: '569CD6' }, // 蓝色
       { token: 'delimiter.angle', foreground: '569CD6' }, // 蓝色
       { token: 'namespace.lending', foreground: 'B5CEA8' },
-      { token: 'namespace.lastModName', foreground: '569CD6', fontStyle: 'italic' }
+      { token: 'namespace.lastModName', foreground: '569CD6', fontStyle: 'italic' },
+
+      { token: 'string.*.invalid', foreground: 'ff0000', fontStyle: 'italic' }, // red
+      { token: 'keyword.module', foreground: 'ff0000' }, // red
+      { token: 'keyword.use', foreground: 'ff0000' }, // red
+      { token: 'keyword.const', foreground: 'ff0000' }, // red
+      { token: 'keyword.struct', foreground: 'ff0000' }, // red
+      { token: 'keyword.fun', foreground: 'ff0000' }, // red
+      { token: 'type.identifier', foreground: 'ff0000' }, // red
+      { token: 'type.use_brace.item.identifier', foreground: 'ff0000' }, // red
+      { token: 'field_type', foreground: 'ff0000' }, // red
+      { token: 'visibility', foreground: 'ff0000' }, // red
+      { token: 'keyword.ability', foreground: 'ff0000' }, // red
+      { token: 'fun_name', foreground: 'ff0000' }, // red
+      { token: 'para_name', foreground: 'ff0000' }, // red
+      { token: 'para_type', foreground: 'ff0000' }, // red
+      { token: 'keyword-*', foreground: 'ff0000' }, // red
+      { token: 'type.primitive', foreground: 'ff0000' }, // red
+      { token: 'constant', foreground: 'ff0000' }, // red
+      { token: 'identifier-*', foreground: 'ff0000' }, // red
   ],
   colors: {
       'editor.foreground': '#D4D4D4',

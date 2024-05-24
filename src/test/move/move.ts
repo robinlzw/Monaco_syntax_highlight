@@ -379,10 +379,10 @@ export const language = <languages.IMonarchLanguage>{
 			// Identifier
 			[/[a-zA-Z_$][\w$]*/, {
 				cases: {
-					'@keywords': 'keyword',
+					'@keywords': { token: 'keyword-$0' },
 					'@type_primitive': 'type.primitive',
 					'@constants': 'constant',
-					'@default': 'identifier'
+					'@default': { token: 'identifier-$0' }
 				}
 			}],
 			// Whitespace + comments
