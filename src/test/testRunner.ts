@@ -49,7 +49,7 @@ function runTests(languageId: string, tests: ITestItem[][]): void {
 function runTest(languageId: string, test: ITestItem[]): void {
 	let text = test.map((t) => t.line).join('\n');
 	let actualTokens = editor.tokenize(text, languageId);
-	console.log("actualTokens")
-	console.log(actualTokens)
+	// console.log("actualTokens")
+	console.log(JSON.stringify(actualTokens))
 	// assert.deepStrictEqual(actual, test);
 }
