@@ -41,6 +41,8 @@ const theme = {
       { token: 'para-type', foreground: '4EC9B0' }, // 浅青色
       { token: 'type.generic', foreground: '4EC9B0' }, // 浅青色
       { token: 'type.primitive', foreground: '4EC9B0' },// 青色
+      { token: 'fun-ret-type', foreground: '4EC9B0' },// 青色
+      
       // { token: 'constant', foreground: 'ff0000' }, // red
       // { token: 'identifier', foreground: 'ff0000' }, // red
   ],

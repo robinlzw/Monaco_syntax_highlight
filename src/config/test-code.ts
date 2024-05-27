@@ -722,4 +722,26 @@ module b::examples4 {
     }
 }
 `
+const code4 = `
+module b::examples4 {
+fun create_currency<T: drop>(
+    otw: T,
+    ctx: &mut TxContext
+): TreasuryCap<T> {
+    let (treasury_cap, metadata) = coin::create_currency(
+        otw, 9,
+        b"SMPL",
+        b"Simple Token",
+        b"Simple Token showcases",
+        option::none(),
+        ctx
+    );
+
+    transfer::public_freeze_object(metadata);
+    fun_name<T>(parameter);
+    treasury_cap
+}
+}
+`
+
 export default code2

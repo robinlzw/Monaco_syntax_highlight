@@ -47,7 +47,7 @@ export const rules = {
 			{ include: '@whitespace' },
 			// Module declaration
 			[/module /, { token: 'keyword.module', next: '@module' }],
-			[/\}/, { token: 'delimiter.curly.module', log: 'module $0 in state {$S0; $S1; $S2}'}],
+			[/\}/, { token: 'delimiter.curly.module', log: 'module $0 in state {$S0; $S1; $S2}' }],
 		],
 
 		whitespace: [
@@ -106,7 +106,7 @@ export const rules = {
 			[/\}/, { token: 'rematch', next: '@pop' }],
 		],
 		lastModName: [
-			[/[a-zA-Z_$][\w$]*/, { token: 'namespace.lastModName', log: 'lastModName = $0'}],
+			[/[a-zA-Z_$][\w$]*/, { token: 'namespace.lastModName', log: 'lastModName = $0' }],
 			[/\s+{/, { token: 'delimiter.curly', next: '@moduleBody' }],
 			[/\}/, { token: 'rematch', next: '@pop' }],
 		],
@@ -163,7 +163,7 @@ export const rules = {
 
 			// 2024move >>
 			// eg: use fun into_box as Rectangle.into_box;
-			[/([A-Z_$][\w$]*)(\.)([a-zA-Z_$][\w$]*)/, 
+			[/([A-Z_$][\w$]*)(\.)([a-zA-Z_$][\w$]*)/,
 				['type.struct.identifier', 'call.dot', 'fun_name']
 			],
 			[/[a-zA-Z_$][\w$]*/, {
@@ -297,6 +297,18 @@ export const rules = {
 				{ token: 'delimiter.paren', next: '@fun_parameter_list' }
 			]],
 
+			// 匹配函数名 with generic ty, with constraint(drop)
+			// eg:
+			// fun create_currency<T: drop>(
+			// 	otw: T,
+			// 	ctx: &mut TxContext
+			// ): TreasuryCap<T> {}
+			[/([a-zA-Z_]\w*)(?=<)/, [
+				{ token: 'fun_name', next: '@fun_generic_ty' }],
+			],
+			[/>\s*\(/,
+				{ token: 'delimiter.paren', next: '@fun_parameter_list' }],
+
 			[/[a-zA-Z_$][\w$]*/, {
 				cases: {
 					'@keywords': 'keyword',
@@ -307,9 +319,37 @@ export const rules = {
 			// 当匹配到}时，返回到上一个状态或者 `module_body` 状态
 			[/\}/, { token: '@rematch', log: 'found $0 in state {$S0; $S1; $S2}', next: '@pop' }],
 
-			[/[<>](?!@symbols)/, '@brackets'],
+			[/>/, '@brackets'],
 			// Whitespace + comments
 			{ include: '@whitespace' },
+		],
+		fun_generic_ty: [
+			[/\</, { token: 'fun_generic_ty-$0', log: 'found $0 in state {$S0; $S1; $S2}', bracket: '@open', next: '@fun_generic_ty.$0' }],
+			[/\>/, {
+				cases: {
+					'$S2=={': { token: 'delimiter.angle}', log: 'nested found $0 in state {$S0; $S1; $S2}', next: '@pop' },
+					'@default': { token: 'delimiter.angle', log: 'found $0 in state {$S0; $S1; $S2}', next: '@fun_parameter_list' }
+				}
+			}],
+
+			// Whitespace + comments
+			{ include: '@whitespace' },
+			[/[a-zA-Z_$][\w$]*/, {
+				cases: {
+					'@keywords': { token: 'keyword' },
+					'@type_primitive': 'type.primitive',
+					'@constants': 'constant',
+					'@property': 'property',
+					'@default': { token: 'identifier' },
+				}
+			}],
+			// Symbols and operators
+			[/@symbols/, {
+				cases: {
+					'@operators': 'operator',
+					'@default': ''
+				}
+			}],
 		],
 		fun_parameter_list: [
 			[/\)/, { token: 'delimiter.paren', next: '@fun_ret_ty' }],
@@ -368,6 +408,23 @@ export const rules = {
 				}
 			}],
 
+			// call
+			[/(\.)([a-zA-Z_$][\w$]*)(\()/,
+				['call.dot', 'fun_name', 'delimiter.paren']
+			],
+			[/(\::)([a-zA-Z_$][\w$]*)(\()/,
+				['call.double_colon', 'fun_name', 'delimiter.paren']
+			],
+			// call with generic ty
+			// fun_name<T>(parameter);
+			[/([a-zA-Z_]\w*)(\s*\<)([^>]*)(\>\s*)(\()/, [
+				'fun_name',
+				'delimiter.angle',
+				'type.generic',
+				'delimiter.angle',
+				'delimiter.paren'],
+			],
+
 			// Identifier
 			[/\b[A-Z_$][\w$]*\b/, 'type.struct.identifier'],
 			[/[a-zA-Z_$][\w$]*/, {
@@ -379,14 +436,6 @@ export const rules = {
 					'@default': { token: 'identifier' },
 				}
 			}],
-
-			// call
-			[/(\.)([a-zA-Z_$][\w$]*)(\()/, 
-				['call.dot', 'fun_name', 'delimiter.paren']
-			],
-			[/(\::)([a-zA-Z_$][\w$]*)(\()/, 
-				['call.double_colon', 'fun_name', 'delimiter.paren']
-			],
 
 			// Whitespace + comments
 			{ include: '@whitespace' },
