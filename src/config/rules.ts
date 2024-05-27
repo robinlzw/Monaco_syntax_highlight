@@ -7,7 +7,7 @@ export const rules = {
 		'address', 'module', 'struct', 'resource', 'fun', 'public', 'move', 'const',
 		'if', 'else', 'return', 'script', 'use', 'match', 'while', 'loop', 'mut', 'assert',
 		'spec', 'enum', 'for', 'friend', 'native', 'invariant', 'copy', 'drop', 'continue',
-		'break', 'abort',
+		'break', 'abort', 'type'
 	],
 
 	property: ['has', 'let', 'as', 'acquires'],

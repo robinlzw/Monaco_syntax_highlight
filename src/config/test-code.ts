@@ -744,4 +744,59 @@ fun create_currency<T: drop>(
 }
 `
 
-export default code2
+const code5 = `
+module xx::examples5 {
+    fun break_with_value() {
+        let mut i = 0;
+        loop {
+            if (v[i] > 10) break i; // 当找到第一个大于 10 的值时，退出循环并带出当前的 i 值
+            i = i + 1;
+        }
+
+    }
+
+    fun named_control_block() {
+        let mut terminate_loop = false;
+
+        while (...loop_condition...) 'outer: {
+            while (...inner_condition...) {
+                ...
+                if (...break_condition...) {
+                    terminate_loop = true;
+                }
+                ...
+                if (terminate_loop) {
+                    break 'outer;
+                }
+            }
+        }
+        
+        let y = loop 'outer: {
+            let _x = loop 'inner: {
+                if (true) {
+                    break 'outer 10;
+                } else {
+                    break 'inner 20;
+                }
+            };
+        };
+        
+    }
+
+    public fun named_block_with_return(auth_one: EasyAuth, auth_two: AuthTwo): u64 {
+        let auth_token = 'auth: {
+            let maybe_auth_token = try_auth(auth_one);
+            if (valid_auth(maybe_auth_token)) {
+                return 'auth unpack_auth(maybe_auth_token);
+            }
+            // ... 更复杂的代码涉及 auth_two
+        };
+        // ... 使用 auth_token 的代码
+    }
+    
+
+}
+`
+
+
+export default code5
