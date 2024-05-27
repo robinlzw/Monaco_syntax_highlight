@@ -408,11 +408,11 @@ export const rules = {
 				}
 			}],
 
-			// call
-			[/(\.)([a-zA-Z_$][\w$]*)(\()/,
+			// call & macro fun
+			[/(\.)([a-zA-Z_$][\w$]*)(?=!*)(\()/,
 				['call.dot', 'fun_name', 'delimiter.paren']
 			],
-			[/(\::)([a-zA-Z_$][\w$]*)(\()/,
+			[/(\::)([a-zA-Z_$][\w$]*)(?=!*)(\()/,
 				['call.double_colon', 'fun_name', 'delimiter.paren']
 			],
 			// call with generic ty
