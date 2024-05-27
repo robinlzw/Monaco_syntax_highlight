@@ -722,4 +722,4 @@ module b::examples4 {
     }
 }
 `
-export default code3
+export default code2
