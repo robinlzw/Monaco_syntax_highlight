@@ -45,6 +45,8 @@ export const rules = {
 			[/#\[.*\]/, 'annotation'],
 			// Whitespace + comments
 			{ include: '@whitespace' },
+			// address
+			[/address/, { token: 'keyword.address', next: '@address' }],
 			// Module declaration
 			[/module /, { token: 'keyword.module', next: '@module' }],
 			[/\}/, { token: 'delimiter.curly.module', log: 'module $0 in state {$S0; $S1; $S2}' }],
@@ -97,10 +99,28 @@ export const rules = {
 			[/[\d][\d_]*(@intSuffixes?)?/, { token: 'number' }]
 		],
 
+		// process address >>
+		address: [
+			// Whitespace + comments
+			{ include: '@whitespace' },
+			{ include: '@numbers' },
+			[/\s+{/, 'delimiter.curly'],
+			// Module declaration
+			[/module /, { token: 'keyword.module', next: '@module' }],
+			[/\}/, { token: 'rematch', next: '@pop' }],
+		],
+		// process address <<
+
 		// process module >>
 		module: [
 			// Module name with namespace
 			[/([a-zA-Z_$][\w$]*::)+/, { token: 'namespace.lending', next: '@lastModName' }],
+
+			[/([^{]*)({)/, [
+				'namespace.lastModName',
+				{ token: 'delimiter.curly', next: '@moduleBody' }]
+			],
+
 			// Whitespace + comments
 			{ include: '@whitespace' },
 			[/\}/, { token: 'rematch', next: '@pop' }],
@@ -257,14 +277,6 @@ export const rules = {
 			[/[:,]/, 'delimiter.comma'],
 			// Whitespace + comments
 			{ include: '@whitespace' },
-		],
-		fieldType: [
-			[/[a-zA-Z_$][\w$]*(<[\w$, ]+>)?/, {
-				cases: {
-					'@type_primitive': 'type.primitive',
-					'@default': 'type.identifier.struct_field_ty'
-				}
-			}],
 		],
 		visibility: [
 			// Match visibility keyword
