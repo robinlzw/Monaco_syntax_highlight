@@ -222,7 +222,7 @@ export const rules = {
 			{ include: '@whitespace' },
 			// Module declaration
 			[/module /, { token: 'keyword.module', next: '@module' }],
-			[/\}/, { token: 'delimiter.curly.end_file', log: 'end_file $0 in state {$S0; $S1; $S2}', next: '@pop' }],
+			[/\}/, { token: 'delimiter.curly.module', log: 'module $0 in state {$S0; $S1; $S2}'}],
 		],
 
 		whitespace: [
@@ -281,7 +281,7 @@ export const rules = {
 			[/\}/, { token: 'rematch', next: '@pop' }],
 		],
 		lastModName: [
-			[/[a-zA-Z_$][\w$]/, 'namespace.lastModName'],
+			[/[a-zA-Z_$][\w$]*/, { token: 'namespace.lastModName', log: 'lastModName = $0'}],
 			[/\s+{/, { token: 'delimiter.curly', next: '@moduleBody' }],
 			[/\}/, { token: 'rematch', next: '@pop' }],
 		],
@@ -306,7 +306,7 @@ export const rules = {
 					'@default': 'normal_code'
 				}
 			}],
-			[/\}/, { token: 'delimiter.curly.in.modulebody', next: '@checkForNewModule' }],
+			[/\}/, { token: 'delimiter.curly.in.modulebody', log: 'moduleBody mmet RBrace, change to checkForNewModule', next: '@checkForNewModule' }],
 		],
 		checkForNewModule: [
 			// 忽略空白字符
@@ -316,11 +316,8 @@ export const rules = {
 
 			[/\}/, { token: '@rematch', next: '@root' }],
 
-			// Whitespace + comments
-			{ include: '@whitespace' },
-
 			// 其他情况返回 moduleBody 继续处理
-			[/.*/, { token: '', next: '@moduleBody' }]
+			[/.*/, { token: '@rematch', next: '@moduleBody' }]
 		],
 		// process module <<
 
@@ -382,7 +379,10 @@ export const rules = {
 			// Whitespace + comments
 			{ include: '@whitespace' },
 			[/[:=]/, 'symbol'],
-			// [/[^\{]+/, 'normalcode.in.const'],
+			{ include: '@numbers' },
+			// Strings
+			[/"([^"\\]|\\.)*$/, 'string.invalid'],
+			[/"/, { token: 'string.quote', bracket: '@open', next: '@string' }],
 		],
 		// process const_statement <<
 
@@ -412,7 +412,7 @@ export const rules = {
 				'field_name',
 				'delimiter.colon'
 			]],
-			[/[a-zA-Z_]\w*/, { token: 'field_type', log: 'found field_type $0 in state {$S0; $S1; $S2}' },],
+			[/[a-zA-Z_]\w*/, { token: 'type.identifier.struct_field_ty', log: 'found field_type $0 in state {$S0; $S1; $S2}' },],
 			[/[<>](?!@symbols)/, '@brackets'],
 			[/[<>]/, 'delimiter.angle'],
 			[/[:,]/, 'delimiter.comma'],
@@ -423,7 +423,7 @@ export const rules = {
 			[/[a-zA-Z_$][\w$]*(<[\w$, ]+>)?/, {
 				cases: {
 					'@type_primitive': 'type.primitive',
-					'@default': 'type.identifier'
+					'@default': 'type.identifier.struct_field_ty'
 				}
 			}],
 		],
@@ -437,7 +437,7 @@ export const rules = {
 			// Match abilities keyword
 			[/\b(has)\b\s+([a-zA-Z_$][\w$, ]*)\s*/, [
 				{ token: 'keyword.ability' },
-				{ token: 'type.identifier' },
+				{ token: 'ability.identifier' },
 			]],
 			// If not present, return to root
 			['', '', '@pop']
@@ -446,9 +446,15 @@ export const rules = {
 
 		// process fun >>
 		fun_declaration: [
-			// 匹配函数名
-			[/([a-zA-Z_]\w*)(\()/, [
+			// 匹配函数名 without generic ty
+			[/([a-zA-Z_]\w*)(?!<\s*[a-zA-Z_$][\w$]*\s*>\s*)(\()/, [
 				'fun_name',
+				{ token: 'delimiter.paren', next: '@fun_parameter_list' }
+			]],
+			// 匹配函数名 with generic ty
+			[/([a-zA-Z_]\w*)(<\s*[a-zA-Z_$][\w$]*\s*>\s*)(\()/, [
+				'fun_name',
+				'type.generic',
 				{ token: 'delimiter.paren', next: '@fun_parameter_list' }
 			]],
 
@@ -462,6 +468,7 @@ export const rules = {
 			// 当匹配到}时，返回到上一个状态或者 `module_body` 状态
 			[/\}/, { token: '@rematch', log: 'found $0 in state {$S0; $S1; $S2}', next: '@pop' }],
 
+			[/[<>](?!@symbols)/, '@brackets'],
 			// Whitespace + comments
 			{ include: '@whitespace' },
 		],
@@ -482,7 +489,7 @@ export const rules = {
 				}
 			}],
 
-			[/(@symbols)/, 'symbols'],
+			[/(@symbols)/, 'fun_parameter_list.symbols'],
 
 			// 当匹配到}时，返回到上一个状态或者 `module_body` 状态
 			[/\}/, { token: '@rematch', log: 'found $0 in state {$S0; $S1; $S2}', next: '@pop' }],
@@ -500,7 +507,7 @@ export const rules = {
 					'@default': { token: 'fun_ret_type', log: 'found fun_ret_type<$0> in state $S0' },
 				}
 			}],
-			[/(@symbols)/, 'symbols'],
+			[/(@symbols)/, 'fun_ret_ty.symbols'],
 
 			[/[<>](?!@symbols)/, '@brackets'],
 

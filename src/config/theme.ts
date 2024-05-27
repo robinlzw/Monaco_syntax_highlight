@@ -22,22 +22,25 @@ const theme = {
       { token: 'namespace.lastModName', foreground: '569CD6', fontStyle: 'italic' },
 
       // { token: 'string.*.invalid', foreground: 'ff0000', fontStyle: 'italic' }, // red
-      { token: 'keyword.module', foreground: 'ff0000' }, // red
-      { token: 'keyword.use', foreground: 'ff0000' }, // red
-      { token: 'keyword.const', foreground: 'ff0000' }, // red
-      { token: 'keyword.struct', foreground: 'ff0000' }, // red
-      { token: 'keyword.fun', foreground: 'ff0000' }, // red
-      { token: 'type.identifier', foreground: 'ff0000' }, // red
-      { token: 'type.use_brace.item.identifier', foreground: 'ff0000' }, // red
-      { token: 'field_type', foreground: 'ff0000' }, // red
-      { token: 'visibility', foreground: 'ff0000' }, // red
-      { token: 'keyword.ability', foreground: 'ff0000' }, // red
-      { token: 'fun_name', foreground: 'ff0000' }, // red
-      { token: 'para-name', foreground: 'ff0000' }, // red
-      { token: 'para-type', foreground: 'ff0000' }, // red
+      { token: 'keyword.module', foreground: '569CD6' }, // 蓝色
+      { token: 'keyword.use', foreground: '569CD6' }, // 蓝色
+      { token: 'keyword.const', foreground: '569CD6' }, // 蓝色
+      { token: 'keyword.struct', foreground: '569CD6' }, // 蓝色
+      { token: 'keyword.fun', foreground: '569CD6' }, // 蓝色
+      // { token: 'type.identifier', foreground: 'ff0000' }, // red
+      { token: 'type.identifier.struct_field_ty', foreground: '4EC9B0' }, // 浅青色
+      
+      // { token: 'type.use_brace.item.identifier', foreground: 'ff0000' }, // red
+      { token: 'visibility', foreground: '569CD6' }, // 蓝色
+      { token: 'property', foreground: '569CD6' }, // 蓝色      
+      // { token: 'keyword.ability', foreground: 'ff0000' }, // red
+      // { token: 'fun-name', foreground: 'ff0000', fontStyle: 'italic' }, // red
+      // { token: 'para-name', foreground: 'ff0000' }, // red
+      { token: 'para-type', foreground: '4EC9B0' }, // 浅青色
+      { token: 'type.generic', foreground: '4EC9B0' }, // 浅青色
       { token: 'type.primitive', foreground: '4EC9B0' },// 青色
-      { token: 'constant', foreground: 'ff0000' }, // red
-      { token: 'identifier', foreground: 'ff0000' }, // red
+      // { token: 'constant', foreground: 'ff0000' }, // red
+      // { token: 'identifier', foreground: 'ff0000' }, // red
   ],
   colors: {
       'editor.foreground': '#D4D4D4',
