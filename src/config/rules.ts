@@ -7,7 +7,7 @@ export const rules = {
 		'address', 'module', 'struct', 'resource', 'fun', 'public', 'move', 'const',
 		'if', 'else', 'return', 'script', 'use', 'match', 'while', 'loop', 'mut', 'assert',
 		'spec', 'enum', 'for', 'friend', 'native', 'invariant', 'copy', 'drop', 'continue',
-		'break', 'abort', 'type'
+		'break', 'abort', 'type', 'entry'
 	],
 
 	property: ['has', 'let', 'as', 'acquires'],
@@ -324,6 +324,9 @@ export const rules = {
 			{ include: '@whitespace' },
 		],
 		fun_generic_ty: [
+			// 当匹配到}时，返回到上一个状态或者 `module_body` 状态
+			[/\}/, { token: '@rematch', log: 'found $0 in state {$S0; $S1; $S2}', next: '@pop' }],
+
 			[/\</, { token: 'fun_generic_ty-$0', log: 'found $0 in state {$S0; $S1; $S2}', bracket: '@open', next: '@fun_generic_ty.$0' }],
 			[/\>/, {
 				cases: {
