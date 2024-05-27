@@ -409,4 +409,46 @@ module b::examples4 {
 }
 
      `
-     export default code
+
+const code2 = `
+#[lint_allow(coin_field)]
+module common::identified_payment {
+	public fun mint(registry: &mut Registry, coin: Coin<SUI>, clock: &Clock, ctx: &mut TxContext) {
+		{
+		}
+	}
+
+	fun mint() {
+		{
+			{
+				let{}
+			}
+			{
+				assert!{}
+			}
+		}
+	}
+	// ikjk kjlkl
+	struct IdentifiedPayment {
+		payment_id: u64,
+		coin: Coin<SUI>,
+	}
+}
+
+module suiversary::suiversary {
+	use sui::coin::Coin;
+	use sui::sui::SUI;
+	use sui::clock::Clock;
+	use sui::package;
+	use sui::display;
+	
+	#[allow(lint(coin_field))]
+	public struct Suiversary has key, store {
+		id: UID,
+		coin: Coin<SUI>,
+		number: u8,
+		minted_timestamp: u64,
+	}
+}
+`
+     export default code2

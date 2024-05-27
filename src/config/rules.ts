@@ -175,7 +175,7 @@
 
 // export default rules;
 import { languages } from 'monaco-editor';
- 
+
 export const rules = {
 	tokenPostfix: '.move',
 	defaultToken: 'invalid',
@@ -309,14 +309,19 @@ export const rules = {
 			[/\}/, { token: 'delimiter.curly.in.modulebody', next: '@checkForNewModule' }],
 		],
 		checkForNewModule: [
-            // 忽略空白字符
-            [/\s+/, { token: 'white' }],
-            // 如果遇到 module 关键字，返回 module 状态并继续解析
-            [/\bmodule\b/, { token: 'keyword.module', next: '@module' }],
+			// 忽略空白字符
+			[/\s+/, { token: 'white' }],
+			// 如果遇到 module 关键字，返回 module 状态并继续解析
+			[/module /, { token: 'keyword.module', next: '@module' }],
+
 			[/\}/, { token: '@rematch', next: '@root' }],
-            // 其他情况返回 moduleBody 继续处理
-            [/.*/, { token: '', next: '@moduleBody' }]
-        ],
+
+			// Whitespace + comments
+			{ include: '@whitespace' },
+
+			// 其他情况返回 moduleBody 继续处理
+			[/.*/, { token: '', next: '@moduleBody' }]
+		],
 		// process module <<
 
 		// process use_statement >>
@@ -407,7 +412,7 @@ export const rules = {
 				'field_name',
 				'delimiter.colon'
 			]],
-			[/[a-zA-Z_]\w*/, {token: 'field_type', log: 'found field_type $0 in state {$S0; $S1; $S2}'},],
+			[/[a-zA-Z_]\w*/, { token: 'field_type', log: 'found field_type $0 in state {$S0; $S1; $S2}' },],
 			[/[<>](?!@symbols)/, '@brackets'],
 			[/[<>]/, 'delimiter.angle'],
 			[/[:,]/, 'delimiter.comma'],
@@ -520,10 +525,10 @@ export const rules = {
 			// Identifier
 			[/[a-zA-Z_$][\w$]*/, {
 				cases: {
-					'@keywords': { token: 'keyword-$0' },
+					'@keywords': { token: 'keyword' },
 					'@type_primitive': 'type.primitive',
 					'@constants': 'constant',
-					'@default': { token: 'identifier-$0' }
+					'@default': { token: 'identifier' }
 				}
 			}],
 			// Whitespace + comments

@@ -168,14 +168,19 @@ export const language = <languages.IMonarchLanguage>{
 			[/\}/, { token: 'delimiter.curly.in.modulebody', next: '@checkForNewModule' }],
 		],
 		checkForNewModule: [
-            // 忽略空白字符
-            [/\s+/, { token: 'white' }],
-            // 如果遇到 module 关键字，返回 module 状态并继续解析
-            [/\bmodule\b/, { token: 'keyword.module', next: '@module' }],
+			// 忽略空白字符
+			[/\s+/, { token: 'white' }],
+			// 如果遇到 module 关键字，返回 module 状态并继续解析
+			[/module /, { token: 'keyword.module', next: '@module' }],
+
 			[/\}/, { token: '@rematch', next: '@root' }],
-            // 其他情况返回 moduleBody 继续处理
-            [/.*/, { token: '', next: '@moduleBody' }]
-        ],
+
+			// Whitespace + comments
+			{ include: '@whitespace' },
+
+			// 其他情况返回 moduleBody 继续处理
+			[/.*/, { token: '', next: '@moduleBody' }]
+		],
 		// process module <<
 
 		// process use_statement >>
@@ -266,7 +271,7 @@ export const language = <languages.IMonarchLanguage>{
 				'field_name',
 				'delimiter.colon'
 			]],
-			[/[a-zA-Z_]\w*/, {token: 'field_type', log: 'found field_type $0 in state {$S0; $S1; $S2}'},],
+			[/[a-zA-Z_]\w*/, { token: 'field_type', log: 'found field_type $0 in state {$S0; $S1; $S2}' },],
 			[/[<>](?!@symbols)/, '@brackets'],
 			[/[<>]/, 'delimiter.angle'],
 			[/[:,]/, 'delimiter.comma'],
