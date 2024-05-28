@@ -798,5 +798,22 @@ module xx::examples5 {
 }
 `
 
+const code6 = `
+    address 0x42 {
+        module M {
+            struct Wrapper1 has copy, drop, store (u64);
 
-export default code5
+            struct Wrapper2(u64) has copy, drop, store;
+
+            public struct Foo { field: u64 } has copy, drop;
+        
+            fun x() {
+                // Error: Positional pack of non-positional struct
+                let _x = Foo(0);
+                abort 0
+            }
+        }
+    }
+`
+
+export default code6

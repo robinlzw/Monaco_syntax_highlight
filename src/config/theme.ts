@@ -28,21 +28,21 @@ const theme = {
       { token: 'keyword.struct', foreground: '569CD6' }, // 蓝色
       { token: 'keyword.fun', foreground: '569CD6' }, // 蓝色
       { token: 'type.struct.identifier', foreground: '569CD6' }, // 蓝色
-      
+
       // { token: 'type.identifier', foreground: 'ff0000' }, // red
       { token: 'type.identifier.struct_field_ty', foreground: '4EC9B0' }, // 浅青色
-      
+
       // { token: 'type.use_brace.item.identifier', foreground: 'ff0000' }, // red
       { token: 'visibility', foreground: '569CD6' }, // 蓝色
       { token: 'property', foreground: 'EF479A' }, // 玫红色
-      // { token: 'keyword.ability', foreground: 'ff0000' }, // red
+      { token: 'abilities', foreground: 'c44dff' },
       { token: 'fun-name', foreground: '00ff99', fontStyle: 'italic' },
       // { token: 'para-name', foreground: 'ff0000' }, // red
       { token: 'para-type', foreground: '4EC9B0' }, // 浅青色
       { token: 'type.generic', foreground: '4EC9B0' }, // 浅青色
       { token: 'type.primitive', foreground: '4EC9B0' },// 青色
       { token: 'fun-ret-type', foreground: '4EC9B0' },// 青色
-      
+
       // { token: 'constant', foreground: 'ff0000' }, // red
       // { token: 'identifier', foreground: 'ff0000' }, // red
   ],

@@ -6,10 +6,10 @@ export const rules = {
 	keywords: [
 		'address', 'module', 'struct', 'resource', 'fun', 'public', 'move', 'const',
 		'if', 'else', 'return', 'script', 'use', 'match', 'while', 'loop', 'mut', 'assert',
-		'spec', 'enum', 'for', 'friend', 'native', 'invariant', 'copy', 'drop', 'continue',
+		'spec', 'enum', 'for', 'friend', 'native', 'invariant', 'continue',
 		'break', 'abort', 'type', 'entry'
 	],
-
+	abilities: ['copy', 'drop', 'store'],
 	property: ['has', 'let', 'as', 'acquires'],
 
 	type_primitive: [
@@ -114,7 +114,7 @@ export const rules = {
 		// process module >>
 		module: [
 			// Module name with namespace
-			[/([a-zA-Z_$][\w$]*::)+/, { token: 'namespace.lending', next: '@lastModName' }],
+			[/([\w$]*::)+/, { token: 'namespace.lending', next: '@lastModName' }],
 
 			[/([^{]*)({)/, [
 				'namespace.lastModName',
@@ -131,6 +131,11 @@ export const rules = {
 			[/\}/, { token: 'rematch', next: '@pop' }],
 		],
 		moduleBody: [
+			[/\}/, { token: 'delimiter.curly.in.modulebody', log: 'moduleBody mmet $0, change to checkForNewModule' }],
+
+			// 如果遇到 module 关键字，返回 module 状态并继续解析
+			[/module /, { token: 'keyword.module', next: '@module' }],
+
 			// use_statement
 			[/use /, { token: 'keyword.use', next: '@use_statement' }],
 			// 匹配 const 关键字
@@ -148,21 +153,12 @@ export const rules = {
 			[/[a-zA-Z_$][\w$]*/, {
 				cases: {
 					'@keywords': 'keyword',
+					'@property': 'property',
+					'@type_primitive': 'type.primitive',
+					'@abilities': 'abilities',
 					'@default': 'normal_code'
 				}
 			}],
-			[/\}/, { token: 'delimiter.curly.in.modulebody', log: 'moduleBody mmet RBrace, change to checkForNewModule', next: '@checkForNewModule' }],
-		],
-		checkForNewModule: [
-			// 忽略空白字符
-			[/\s+/, { token: 'white' }],
-			// 如果遇到 module 关键字，返回 module 状态并继续解析
-			[/module /, { token: 'keyword.module', next: '@module' }],
-
-			[/\}/, { token: '@rematch', next: '@root' }],
-
-			// 其他情况返回 moduleBody 继续处理
-			[/.*/, { token: '@rematch', next: '@moduleBody' }]
 		],
 		// process module <<
 
@@ -173,7 +169,7 @@ export const rules = {
 			use sui::sui::SUI;
 			use a::shapes::{Rectangle, Square};
 			 */
-			[/([a-zA-Z_$][\w$]*::)+/, { token: 'namespace.lending', next: '@use_items' }],
+			[/([\w$]*::)+/, { token: 'namespace.lending', next: '@use_items' }],
 			// Whitespace + comments
 			{ include: '@whitespace' },
 			[/;/, { token: 'symbol.semicolon', next: '@pop' }],
@@ -251,14 +247,16 @@ export const rules = {
 			[/[a-zA-Z_$][\w$]*/, {
 				cases: {
 					'@property': 'property',
-					'@default': 'abilities'
+					'@type_primitive': 'type.primitive',
+					'@abilities': 'abilities',
+					'@default': 'normal_code'
 				}
 			}],
 			// Match commas separating identifiers
 			[/,/, { token: 'delimiter.comma' }],
 			[/\s+{/, { token: 'delimiter.curly', next: '@struct_body' }],
 			[/\}/, { token: '@rematch', log: 'end struct_def $0 in state {$S0; $S1; $S2}', next: '@pop' }],
-
+			[/;/, { token: 'delimiter.semicolon', log: 'end struct_def by position field[semicolon]', next: '@pop' }],
 			// Whitespace + comments
 			{ include: '@whitespace' },
 		],
@@ -284,15 +282,15 @@ export const rules = {
 			// If not present, return to root
 			['', '', '@pop']
 		],
-		abilities: [
-			// Match abilities keyword
-			[/\b(has)\b\s+([a-zA-Z_$][\w$, ]*)\s*/, [
-				{ token: 'keyword.ability' },
-				{ token: 'ability.identifier' },
-			]],
-			// If not present, return to root
-			['', '', '@pop']
-		],
+		// abilities: [
+		// 	// Match abilities keyword
+		// 	[/\b(has)\b\s+([a-zA-Z_$][\w$, ]*)\s*/, [
+		// 		{ token: 'keyword.ability' },
+		// 		{ token: 'ability.identifier' },
+		// 	]],
+		// 	// If not present, return to root
+		// 	['', '', '@pop']
+		// ],
 		// process struct <<
 
 		// process fun >>
