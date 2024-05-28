@@ -35,6 +35,7 @@ const theme = {
       // { token: 'type.use_brace.item.identifier', foreground: 'ff0000' }, // red
       { token: 'visibility', foreground: '569CD6' }, // 蓝色
       { token: 'property', foreground: 'EF479A' }, // 玫红色
+      { token: 'keywords.exp', foreground: 'EF479A' }, // 玫红色
       { token: 'abilities', foreground: 'c44dff' },
       { token: 'fun-name', foreground: '00ff99', fontStyle: 'italic' },
       // { token: 'para-name', foreground: 'ff0000' }, // red
@@ -42,7 +43,7 @@ const theme = {
       { token: 'type.generic', foreground: '4EC9B0' }, // 浅青色
       { token: 'type.primitive', foreground: '4EC9B0' },// 青色
       { token: 'fun-ret-type', foreground: '4EC9B0' },// 青色
-
+      { token: 'labeled-blk', foreground: '4EC9B0' },// 青色
       // { token: 'constant', foreground: 'ff0000' }, // red
       // { token: 'identifier', foreground: 'ff0000' }, // red
   ],

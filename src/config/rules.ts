@@ -4,13 +4,16 @@ export const rules = {
 	tokenPostfix: '.move',
 	defaultToken: 'invalid',
 	keywords: [
-		'address', 'module', 'struct', 'resource', 'fun', 'public', 'move', 'const',
-		'if', 'else', 'return', 'script', 'use', 'match', 'while', 'loop', 'mut', 'assert',
-		'spec', 'enum', 'for', 'friend', 'native', 'invariant', 'continue',
-		'break', 'abort', 'type', 'entry'
+		'address', 'module', 'struct', 'resource', 'fun', 'public',
+		'move', 'const', 'script', 'use', 'mut', 'assert', 'spec',
+		'enum', 'friend', 'native', 'invariant', 'type', 'entry', 'macro'
 	],
 	abilities: ['copy', 'drop', 'store'],
 	property: ['has', 'let', 'as', 'acquires'],
+	keywords_exp: [
+		'if', 'else', 'return', 'match', 'while', 
+		'loop', 'for', 'continue',	'break', 'abort', 
+	],
 
 	type_primitive: [
 		'u8', 'u16', 'u32', 'u64', 'u128', 'u256', 'address', 'bool', 'signer'
@@ -19,14 +22,14 @@ export const rules = {
 	constants: ['true', 'false', 'Some', 'None', 'Left', 'Right', 'Ok', 'Err'],
 
 	operators: [
-		'!', '!=', '%', '%=', '&', '&=', '&&', '*', '*=', '+', '+=', '-', '-=',
+		'!', '!=', '%', '%=', '&', '&=', '&&', '*', '*=', '+', '+=', '-', '-=', '\'',
 		'->', '.', '..', '...', '/', '/=', ':', ';', '<<', '<<=', '<', '<=', '=',
 		'==', '=>', '>', '>=', '>>', '>>=', '@', '^', '^=', '|', '|=', '||', '_', '?', '#'
 	],
 
 	// we include these common regular expressions
 	// symbols: /[=><!~?,:&|+\-*\/\^%]+/,
-	symbols: /[=><!~?,:&|+\-*\/\^%._#;@]+/,
+	symbols: /[=><!~?,:&\'|+\-*\/\^%._#;@]+/,
 
 	escapes: /\\([nrt0\"''\\]|x\h{2}|u\{\h{1,6}\})/,
 	intSuffixes: /[iu](8|16|32|64|128|size)/,
@@ -153,6 +156,7 @@ export const rules = {
 			[/[a-zA-Z_$][\w$]*/, {
 				cases: {
 					'@keywords': 'keyword',
+					'@keywords_exp': 'keywords.exp',
 					'@property': 'property',
 					'@type_primitive': 'type.primitive',
 					'@abilities': 'abilities',
@@ -185,6 +189,7 @@ export const rules = {
 			[/[a-zA-Z_$][\w$]*/, {
 				cases: {
 					'@keywords': 'keyword',
+					'@keywords_exp': 'keywords.exp',
 					'@property': 'property',
 					'@default': 'normal_code'
 				}
@@ -322,6 +327,7 @@ export const rules = {
 			[/[a-zA-Z_$][\w$]*/, {
 				cases: {
 					'@keywords': 'keyword',
+					'@keywords_exp': 'keywords.exp',
 					'@default': 'normal_code'
 				}
 			}],
@@ -350,6 +356,7 @@ export const rules = {
 			[/[a-zA-Z_$][\w$]*/, {
 				cases: {
 					'@keywords': { token: 'keyword' },
+					'@keywords_exp': 'keywords.exp',
 					'@type_primitive': 'type.primitive',
 					'@constants': 'constant',
 					'@property': 'property',
@@ -376,6 +383,7 @@ export const rules = {
 			[/[a-zA-Z_]\w*/, {
 				cases: {
 					'@keywords': 'keyword',
+					'@keywords_exp': 'keywords.exp',
 					'@default': { token: 'para_type', log: 'found para_type<$0> in state $S0' },
 					// '@default': 'para_type',
 				}
@@ -396,6 +404,7 @@ export const rules = {
 			[/[a-zA-Z_]\w*/, {
 				cases: {
 					'@keywords': 'keyword',
+					'@keywords_exp': 'keywords.exp',
 					'@default': { token: 'fun_ret_type', log: 'found fun_ret_type<$0> in state $S0' },
 				}
 			}],
@@ -428,6 +437,9 @@ export const rules = {
 			[/(\::)([a-zA-Z_$][\w$]*)(?=!*)(\()/,
 				['call.double_colon', 'fun_name', 'delimiter.paren']
 			],
+			[/([a-zA-Z_$][\w$]*)(!)(\()/,
+				['fun_name', '', 'delimiter.paren']
+			],
 			// call with generic ty
 			// fun_name<T>(parameter);
 			[/([a-zA-Z_]\w*)(\s*\<)([^>]*)(\>\s*)(\()/, [
@@ -438,11 +450,16 @@ export const rules = {
 				'delimiter.paren'],
 			],
 
+			// labeled_block
+			[/(\&)('[a-zA-Z_$][\w$]*)/, ['', 'labeled_blk']],
+			[/'[a-zA-Z_$][\w$]*/, 'labeled_blk'],
+
 			// Identifier
 			[/\b[A-Z_$][\w$]*\b/, 'type.struct.identifier'],
 			[/[a-zA-Z_$][\w$]*/, {
 				cases: {
 					'@keywords': { token: 'keyword' },
+					'@keywords_exp': 'keywords.exp',
 					'@type_primitive': 'type.primitive',
 					'@constants': 'constant',
 					'@property': 'property',
